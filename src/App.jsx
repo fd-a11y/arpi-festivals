@@ -1663,6 +1663,23 @@ const OUTILS = [
     limites: ["Accès conditionné à une sélection préalable", "Pas un outil de soumission"],
     ideal: "Réalisateurs et producteurs avec un film déjà sélectionné, cherchant à maximiser sa circulation internationale.",
   },
+  {
+  id: "filmfreeway",
+  nom: "FilmFreeway",
+  url: "https://filmfreeway.com",
+  logo: "FF",
+  couleur: "#1DB954",
+  type: "Soumission",
+  formats: ["long-métrage fiction", "long-métrage documentaire", "court-métrage fiction", "court-métrage documentaire", "court-métrage animation", "série", "expérimental"],
+  perimetre: "International — plus de 12 000 festivals dont 236 accrédités Oscar/BAFTA",
+  langue: "Anglais / Multilingue",
+  tarif: "Gratuit pour les cinéastes. Frais selon les festivals.",
+  ethique: false,
+  description: "Plateforme de référence mondiale pour la soumission en festivals. Couvre tous les formats et toutes les régions. Utilisée par Sundance, TIFF, Berlinale et la majorité des festivals anglophones et internationaux.",
+  forces: ["Catalogue mondial (12 000+ festivals)", "Gratuit pour soumettre", "Tous formats et durées", "Festivals Oscar/BAFTA accrédités"],
+  limites: ["Interface en anglais", "Pas de charte éthique — qualité variable des festivals", "Très grand volume, concurrence élevée"],
+  ideal: "Tout cinéaste cherchant une diffusion internationale, notamment vers les marchés anglophones.",
+},
 ];
 
 function OutilsView() {

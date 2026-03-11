@@ -1098,7 +1098,7 @@ export default function ARPiFestivals() {
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <a href="https://arpi-org.com/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center" }}>
                 <img
-                  src="https://arpi-org.be/wp-content/uploads/2024/11/Logo-ARPi-blanc.png"
+                  src="https://arpi-org.com/wp-content/uploads/2024/11/Logo-ARPi-blanc.png"
                   alt="ARPi"
                   style={{ height: 44, width: "auto" }}
                 />

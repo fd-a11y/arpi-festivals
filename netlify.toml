@@ -1,4 +1,9 @@
-[build]
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "ALLOW-FROM https://arpi-be.com"
+    Content-Security-Policy = "frame-ancestors https://arpi-be.com"
+    [build]
   command = "npm run build"
   publish = "dist"
   functions = "netlify/functions"

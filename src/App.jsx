@@ -1,94 +1,136 @@
-import { useState, useMemo } from "react";
+<style>
+  :root {
+    --bg: #1B252F;
+    --accent: #e8820c;
+    --text: #f0f0f0;
+    --text-muted: #8a9ab5;
+    --border: rgba(232, 130, 12, 0.2);
+  }
 
-async function analyzePitchWithClaude(pitch) {
-  const response = await fetch("/.netlify/functions/anthropic", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1000,
-      messages: [{
-        role: "user",
-        content: `Tu es un expert en festivals de cinéma. Analyse ce pitch de film et retourne UNIQUEMENT un objet JSON (sans balises markdown, sans texte avant ou après) avec les clés suivantes :
+  .arpi-festivals-wrapper {
+    position: relative;
+    width: 100%;
+    padding: 32px 40px 48px;
+    background: var(--bg);
+  }
 
-- formats: tableau parmi ["long-métrage fiction", "long-métrage documentaire", "court-métrage fiction", "court-métrage documentaire", "court-métrage animation", "série", "essai", "hybride"]
-- genres: tableau parmi ["drame", "documentaire", "comédie", "thriller", "expérimental", "animation", "essai", "hybride", "social", "indépendant"]
-- themes: tableau parmi ["société", "identité", "politique", "diaspora", "francophonie", "mémoire", "droits humains", "environnement", "art", "famille", "jeunesse"]
-- langue: une valeur parmi ["français", "néerlandais", "anglais", ""] selon la langue probable du film
-- resume: une phrase courte (max 20 mots) résumant les caractéristiques clés détectées
+  .arpi-iframe-container {
+    position: relative;
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--bg);
+  }
 
-Pitch : "${pitch}"`
-      }]
-    })
-  });
-  const data = await response.json();
-  const text = data.content.map(i => i.text || "").join("");
-  const clean = text.replace(/```json|```/g, "").trim();
-  return JSON.parse(clean);
-}
+  .arpi-iframe-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    background: var(--bg);
+    z-index: 2;
+    transition: opacity 0.4s;
+  }
 
-const FESTIVALS = [
-  // ── BELGIQUE ────────────────────────────────────────────────────────────────
-  {
-    id: 1,
-    nom: "BRIFF — Brussels International Film Festival",
-    pays: "Belgique", ville: "Bruxelles", region: "belgique",
-    formats: ["long-métrage fiction", "long-métrage documentaire"],
-    genres: ["drame", "thriller", "comédie", "social"],
-    themes: ["société", "identité", "politique", "famille"],
-    langues: ["français", "néerlandais", "toutes langues"],
-    deadline: "À confirmer", edition: "Juin", frais: "Gratuit membres",
-    prestige: "A", site: "https://briff.be",
-    description: "L'un des festivals belges de référence, axé sur le cinéma européen et mondial.",
-    accréditations: ["FIAPF"], profils: ["réalisateur", "producteur"],
-    cca: false,
-    soumission: { plateforme: "Soumission directe", url: "https://briff.be", note: "Formulaire sur le site officiel" },
-  },
-  {
-    id: 2,
-    nom: "Cinédoc Bruxelles",
-    pays: "Belgique", ville: "Bruxelles", region: "belgique",
-    formats: ["court-métrage documentaire", "long-métrage documentaire"],
-    genres: ["documentaire", "essai"],
-    themes: ["société", "environnement", "mémoire", "art"],
-    langues: ["français", "toutes langues"],
-    deadline: "À confirmer", edition: "Janvier", frais: "15€",
-    prestige: "B", site: "#",
-    description: "Festival dédié au documentaire de création, espace de débat et de découverte.",
-    accréditations: [], profils: ["réalisateur", "auteur"],
-    cca: false,
-    soumission: { plateforme: "DocFilmDepot", url: "https://www.docfilmdepot.com", note: "Dépôt numérique via DocFilmDepot — système de timbres en ligne" },
-  },
-  {
-    id: 3,
-    nom: "Anima — Festival International du Film d'Animation",
-    pays: "Belgique", ville: "Bruxelles", region: "belgique",
-    formats: ["court-métrage animation", "long-métrage animation", "série animation"],
-    genres: ["animation", "expérimental"],
-    themes: ["fantaisie", "jeunesse", "art"],
-    langues: ["toutes langues"],
-    deadline: "À confirmer", edition: "Mars", frais: "20€",
-    prestige: "A", site: "https://animafestival.be",
-    description: "Festival de référence internationale pour le film d'animation, toutes formes confondues.",
-    accréditations: ["ASIFA"], profils: ["réalisateur", "producteur", "auteur"],
-    cca: false,
-    soumission: { plateforme: "Soumission directe", url: "https://animafestival.be", note: "Formulaire en ligne sur le site officiel" },
-  },
-  {
-    id: 4,
-    nom: "FIFF — Festival International du Film Francophone de Namur",
-    pays: "Belgique", ville: "Namur", region: "belgique",
-    formats: ["long-métrage fiction", "long-métrage documentaire", "court-métrage fiction"],
-    genres: ["drame", "documentaire", "comédie"],
-    themes: ["francophonie", "identité", "diaspora", "société"],
-    langues: ["français"],
-    deadline: "À confirmer", edition: "Octobre", frais: "Gratuit",
-    prestige: "A", site: "https://fiff.be",
-    description: "Le festival phare de la francophonie, vitrine du cinéma en langue française.",
-    accréditations: ["FIAPF"], profils: ["réalisateur", "producteur", "auteur"],
-    cca: false,
-    soumission: { plateforme: "Soumission directe", url: "https://fiff.be", note: "Formulaire officiel — gratuit pour les productions francophones" },
-  },
+  .arpi-iframe-loader.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .arpi-loader-bar {
+    width: 120px;
+    height: 2px;
+    background: rgba(232, 130, 12, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .arpi-loader-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 40%;
+    background: var(--accent);
+    border-radius: 2px;
+    animation: arpi-slide 1.2s ease-in-out infinite;
+  }
+
+  @keyframes arpi-slide {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(350%); }
+  }
+
+  .arpi-loader-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  #arpi-festivals-frame {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    min-height: 700px;
+    border: none;
+    background: transparent;
+  }
+
+  @media (max-width: 768px) {
+    .arpi-section-header,
+    .arpi-festivals-wrapper {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    #arpi-festivals-frame {
+      height: 100vh;
+      min-height: 600px;
+    }
+  }
+</style>
+
+<div class="arpi-festivals-wrapper">
+  <div class="arpi-iframe-container">
+
+    <div class="arpi-iframe-loader" id="arpi-loader">
+      <div class="arpi-loader-bar"></div>
+      <span class="arpi-loader-text">Chargement</span>
+    </div>
+
+    <iframe
+      id="arpi-festivals-frame"
+      src="https://arpi-festivals.netlify.app"
+      title="ARPi Festivals - Identification de festivals"
+      loading="lazy"
+      allow="fullscreen"
+    ></iframe>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    var frame = document.getElementById('arpi-festivals-frame');
+    var loader = document.getElementById('arpi-loader');
+
+    frame.addEventListener('load', function () {
+      loader.classList.add('hidden');
+    });
+
+    window.addEventListener('message', function (e) {
+      if (e.origin !== 'https://arpi-festivals.netlify.app') return;
+      if (e.data && typeof e.data.height === 'number') {
+        frame.style.height = e.data.height + 'px';
+      }
+    });
+  })();
+</script>  },
   {
     id: 5,
     nom: "Millenium — Festival International du Film Documentaire",

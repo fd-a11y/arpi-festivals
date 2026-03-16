@@ -1,12 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "ALLOW-FROM https://arpi-be.com"
-    Content-Security-Policy = "frame-ancestors https://arpi-be.com"
-    [build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
+    Content-Security-Policy = "frame-ancestors 'self' https://arpi-be.com https://www.arpi-be.com"
 
 [[redirects]]
   from = "/*"

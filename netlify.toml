@@ -6,8 +6,8 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "ALLOW-FROM https://arpi-org.com"
-    Content-Security-Policy = "frame-ancestors 'self' https://arpi-org.com https://www.arpi-org.com"
+    X-Frame-Options = "ALLOW-FROM https://www.arpi-be.com"
+    Content-Security-Policy = "frame-ancestors 'self' https://arpi-org.com https://www.arpi-org.com https://arpi-be.com https://www.arpi-be.com"
 
 [[redirects]]
   from = "/*"

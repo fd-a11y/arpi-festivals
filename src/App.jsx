@@ -4,8 +4,8 @@ import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 // ── Firebase ──────────────────────────────────────────────────────────────────
 const firebaseApp = initializeApp({
- apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "arpi2026-7cf61.firebaseapp.com",
+apiKey: import.meta.env.VITE_FIREBASE_API_KEY,  
+ authDomain: "arpi2026-7cf61.firebaseapp.com",
   projectId: "arpi2026-7cf61",
   storageBucket: "arpi2026-7cf61.firebasestorage.app",
   messagingSenderId: "374262445029",

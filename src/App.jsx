@@ -2,16 +2,14 @@ import { useState, useMemo, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
-// ── Firebase ──────────────────────────────────────────────────────────────────
 const firebaseApp = initializeApp({
-apiKey: import.meta.env.VITE_FIREBASE_API_KEY,  
- authDomain: "arpi2026-7cf61.firebaseapp.com",
-  projectId: "arpi2026-7cf61",
-  storageBucket: "arpi2026-7cf61.firebasestorage.app",
-  messagingSenderId: "374262445029",
-  appId: "1:374262445029:web:ad314112a4dfec7ad9b50c",
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_ID,
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 });
-const db = getFirestore(firebaseApp);
 
 async function analyzePitchWithClaude(pitch) {
   const response = await fetch("/.netlify/functions/anthropic", {

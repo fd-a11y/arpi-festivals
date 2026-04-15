@@ -77,6 +77,23 @@ export default function ARPiFestivals() {
   const [pitchState, setPitchState] = useState({ loading: false, resume: "", error: "" });
   const [userFestivals, setUserFestivals] = useState([]);
 
+// ── postMessage hauteur pour iframe WordPress ─────────────────────────────
+  useEffect(() => {
+    function sendHeight() {
+      window.parent.postMessage(
+        { iframeHeight: document.documentElement.scrollHeight },
+        'https://arpi-be.com'
+      );
+    }
+    sendHeight();
+    window.addEventListener('resize', sendHeight);
+    const observer = new ResizeObserver(sendHeight);
+    observer.observe(document.body);
+    return () => {
+      window.removeEventListener('resize', sendHeight);
+      observer.disconnect();
+    };
+  }, []);
   // ── Chargement Firestore ──────────────────────────────────────────────────
   useEffect(() => {
     async function loadFestivals() {
@@ -698,7 +715,7 @@ if (typeof document !== "undefined") {
   const _s = document.createElement("style");
   _s.textContent = [
     "@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@300;400;500&display=swap');",
-    "html, body { margin: 0; padding: 0; background: #1C2B3A; box-sizing: border-box; }",
+    "html, body { margin: 0; padding: 0; background: #1C2B3A; box-sizing: border-box; overflow: hidden; }",
     "*, *::before, *::after { box-sizing: border-box; }",
   ].join("\n");
   document.head.appendChild(_s);
